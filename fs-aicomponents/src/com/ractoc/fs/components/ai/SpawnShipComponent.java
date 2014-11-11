@@ -37,12 +37,14 @@ public class SpawnShipComponent extends AiComponent {
         shipTemplate = (String) getProp("shipTemplate");
         spawned = (String) exits.get("spawned");
 
-        EntityTemplate template = (EntityTemplate) assetManager.loadAsset(shipTemplate);
-        shipEntity = Entities.getInstance().createEntity(template.getComponentsAsArray());
-        LocationComponent lc = Entities.getInstance().loadComponentForEntity(entity, LocationComponent.class);
-        Entities.getInstance().addComponentsToEntity(shipEntity, lc);
-        aiScript.setGlobalProp("shipEntity", shipEntity.getId());
-        aiScript.setCurrentComponent(spawned);
+        if (assetManager != null) {
+            EntityTemplate template = (EntityTemplate) assetManager.loadAsset(shipTemplate);
+            shipEntity = Entities.getInstance().createEntity(template.getComponentsAsArray());
+            LocationComponent lc = Entities.getInstance().loadComponentForEntity(entity, LocationComponent.class);
+            Entities.getInstance().addComponentsToEntity(shipEntity, lc);
+            aiScript.setGlobalProp("shipEntity", shipEntity.getId());
+            aiScript.setCurrentComponent(spawned);
+        }
     }
 
     @Override

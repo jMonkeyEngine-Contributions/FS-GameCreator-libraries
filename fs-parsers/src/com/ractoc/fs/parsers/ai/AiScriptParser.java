@@ -130,9 +130,12 @@ public class AiScriptParser {
 
     private Class<? extends AiComponent> getComponentTypeForClassName(String className) {
         try {
-            return (Class<? extends AiComponent>) loader.loadClass(className);
+            System.out.println("loading class " + className);
+            Class clazz = loader.loadClass(className);
+            System.out.println("is AiComponent: " + AiComponent.class.isAssignableFrom(clazz));
+            return (Class<? extends AiComponent>) clazz;
         } catch (ClassNotFoundException ex) {
-            throw new ParserException(className + " is not an EntityComponent", ex);
+            throw new ParserException(className + " is not an AIComponent", ex);
         }
     }
 
@@ -150,5 +153,9 @@ public class AiScriptParser {
             line = reader.readLine();
         }
         return props;
+    }
+
+    public void setClassLoader(ClassLoader classLoader) {
+        this.loader = classLoader;
     }
 }

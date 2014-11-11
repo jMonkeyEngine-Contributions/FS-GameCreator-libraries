@@ -34,13 +34,15 @@ public class SubScriptComponent extends AiComponent {
         scriptNames = (String) getProp("scripts");
         exit = (String) exits.get("exit");
 
-        String[] scriptNameList = scriptNames.split(",");
-        for (String scriptName : scriptNameList) {
-            AiScript script = (AiScript) assetManager.loadAsset(scriptName.trim());
-            script.initialise(entity, assetManager);
-            script.setSubScript(true);
-            script.getGlobalProps().putAll(aiScript.getGlobalProps());
-            scripts.add(script);
+        if (assetManager != null) {
+            String[] scriptNameList = scriptNames.split(",");
+            for (String scriptName : scriptNameList) {
+                AiScript script = (AiScript) assetManager.loadAsset(scriptName.trim());
+                script.initialise(entity, assetManager);
+                script.setSubScript(true);
+                script.getGlobalProps().putAll(aiScript.getGlobalProps());
+                scripts.add(script);
+            }
         }
     }
 
