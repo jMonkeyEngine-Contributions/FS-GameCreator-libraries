@@ -14,38 +14,14 @@ import com.ractoc.fs.es.EntityResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DamageAppState extends AbstractAppState {
+public class DamageAppState extends AbstractEntityControl {
 
     private EntityResultSet resultSet;
     private List<Entity> damageEntities = new ArrayList<Entity>();
     private AppStateManager appStateManager;
 
     public DamageAppState() {
-        queryEntityResultSet();
-    }
-
-    private void queryEntityResultSet() {
-        Entities entities = Entities.getInstance();
-        ComponentTypeCriteria criteria = new ComponentTypeCriteria(DamageComponent.class, LocationComponent.class);
-        resultSet = entities.queryEntities(criteria);
-    }
-
-    @Override
-    public void initialize(AppStateManager stateManager, Application app) {
-        super.initialize(stateManager, app);
-        appStateManager = stateManager;
-    }
-
-    @Override
-    public void stateAttached(AppStateManager stateManager) {
-        super.stateAttached(stateManager);
-        setEnabled(true);
-    }
-
-    @Override
-    public void stateDetached(AppStateManager stateManager) {
-        super.stateDetached(stateManager);
-        setEnabled(false);
+        resultSet = queryEntityResultSet(DamageComponent.class, LocationComponent.class);
     }
 
     @Override

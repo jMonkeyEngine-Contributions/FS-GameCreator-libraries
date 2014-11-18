@@ -53,7 +53,7 @@ public class SceneLoader {
                 entities.addComponentsToEntity(entity, new LocationComponent(spatial.getWorldTranslation(), spatial.getWorldRotation(), spatial.getLocalScale()));
                 spatial.removeFromParent();
             } else {
-                new ParserException("No components for template " + templateFileName);
+                throw new ParserException("No components for template " + templateFileName);
             }
         }
 

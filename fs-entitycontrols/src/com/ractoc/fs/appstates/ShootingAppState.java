@@ -1,48 +1,18 @@
 package com.ractoc.fs.appstates;
 
-import com.jme3.app.Application;
-import com.jme3.app.SimpleApplication;
-import com.jme3.app.state.AbstractAppState;
-import com.jme3.app.state.AppStateManager;
 import com.jme3.math.Vector3f;
 import com.ractoc.fs.components.es.*;
-import com.ractoc.fs.es.ComponentTypeCriteria;
 import com.ractoc.fs.es.Entities;
 import com.ractoc.fs.es.Entity;
 import com.ractoc.fs.es.EntityResultSet;
 import com.ractoc.fs.parsers.entitytemplate.EntityTemplate;
 
-public class ShootingAppState extends AbstractAppState {
+public class ShootingAppState extends AbstractEntityControl {
 
-    private SimpleApplication application;
     private EntityResultSet resultSet;
 
     public ShootingAppState() {
-        queryEntityResultSet();
-    }
-
-    private void queryEntityResultSet() {
-        Entities entities = Entities.getInstance();
-        ComponentTypeCriteria criteria = new ComponentTypeCriteria(ShootMainComponent.class, LocationComponent.class);
-        resultSet = entities.queryEntities(criteria);
-    }
-
-    @Override
-    public void initialize(AppStateManager stateManager, Application app) {
-        super.initialize(stateManager, app);
-        application = (SimpleApplication) app;
-    }
-
-    @Override
-    public void stateAttached(AppStateManager stateManager) {
-        super.stateAttached(stateManager);
-        setEnabled(true);
-    }
-
-    @Override
-    public void stateDetached(AppStateManager stateManager) {
-        super.stateDetached(stateManager);
-        setEnabled(false);
+        resultSet = queryEntityResultSet(ShootMainComponent.class, LocationComponent.class);
     }
 
     @Override
@@ -62,7 +32,7 @@ public class ShootingAppState extends AbstractAppState {
         if (shootMainComponent.getInterval() <= 0) {
             LocationComponent locationComponent = Entities.getInstance().loadComponentForEntity(shootingEntity, LocationComponent.class);
             LocationComponent bulletLocation = new LocationComponent(locationComponent.getTranslation(), locationComponent.getRotation(), new Vector3f(0.25f, 0.25f, 0.25f));
-            EntityTemplate bulletTemplate = (EntityTemplate) application.getAssetManager().loadAsset("/Templates/Entity/BasicShipTemplate.etpl");
+            EntityTemplate bulletTemplate = (EntityTemplate) getAssetManager().loadAsset("/Templates/Entity/BasicShipTemplate.etpl");
             Entity bulletEntity = Entities.getInstance().createEntity(bulletTemplate.getComponentsAsArray());
             Entities.getInstance().addComponentsToEntity(bulletEntity, bulletLocation, new OriginComponent(shootingEntity.getId()), new SpeedComponent(15f, 0f, 0f), new MovementComponent(true, false, false, false, false, false), new DamageComponent(150));
             Entities.getInstance().changeComponentsForEntity(shootingEntity, new ShootMainComponent(0.5f));

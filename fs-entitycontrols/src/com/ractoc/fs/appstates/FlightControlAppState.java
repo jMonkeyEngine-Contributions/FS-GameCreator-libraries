@@ -1,7 +1,6 @@
 package com.ractoc.fs.appstates;
 
 import com.jme3.app.Application;
-import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.input.InputManager;
 import com.jme3.input.controls.ActionListener;
@@ -13,20 +12,14 @@ import com.ractoc.fs.es.EntityException;
 import com.ractoc.fs.es.EntityResultSet;
 import java.util.List;
 
-public class FlightControlAppState extends AbstractAppState implements ActionListener {
+public class FlightControlAppState extends AbstractEntityControl implements ActionListener {
 
     private EntityResultSet resultSet;
     private Entity controlledEntity;
     private MovementComponent movementComponent;
 
     public FlightControlAppState() {
-        queryEntityResultSet();
-    }
-
-    private void queryEntityResultSet() {
-        Entities entities = Entities.getInstance();
-        ComponentTypeCriteria criteria = new ComponentTypeCriteria(RenderComponent.class, LocationComponent.class, CanMoveComponent.class, ControlledComponent.class);
-        resultSet = entities.queryEntities(criteria);
+        resultSet = queryEntityResultSet(RenderComponent.class, LocationComponent.class, CanMoveComponent.class, ControlledComponent.class);
     }
 
     @Override
@@ -44,18 +37,6 @@ public class FlightControlAppState extends AbstractAppState implements ActionLis
                                  Controls.ROTATE_LEFT.name(),
                                  Controls.ROTATE_RIGHT.name(),
                                  Controls.SHOOT_MAIN.name());
-    }
-
-    @Override
-    public void stateAttached(AppStateManager stateManager) {
-        super.stateAttached(stateManager);
-        setEnabled(true);
-    }
-
-    @Override
-    public void stateDetached(AppStateManager stateManager) {
-        super.stateDetached(stateManager);
-        setEnabled(false);
     }
 
     @Override

@@ -1,53 +1,21 @@
 package com.ractoc.fs.appstates;
 
-import com.jme3.app.Application;
-import com.jme3.app.SimpleApplication;
-import com.jme3.app.state.AbstractAppState;
-import com.jme3.app.state.AppStateManager;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import com.ractoc.fs.components.es.BoundedEntityComponent;
 import com.ractoc.fs.components.es.CanMoveComponent;
 import com.ractoc.fs.components.es.LocationComponent;
 import com.ractoc.fs.components.es.MovementComponent;
 import com.ractoc.fs.components.es.SpeedComponent;
-import com.ractoc.fs.es.ComponentTypeCriteria;
 import com.ractoc.fs.es.Entities;
 import com.ractoc.fs.es.Entity;
 import com.ractoc.fs.es.EntityResultSet;
 
-public class FlightAppState extends AbstractAppState {
+public class FlightAppState extends AbstractEntityControl {
 
-    private SimpleApplication application;
     private EntityResultSet resultSet;
-    private boolean bounded;
 
     public FlightAppState() {
-        queryEntityResultSet();
-    }
-
-    private void queryEntityResultSet() {
-        Entities entities = Entities.getInstance();
-        ComponentTypeCriteria criteria = new ComponentTypeCriteria(CanMoveComponent.class, SpeedComponent.class, MovementComponent.class, LocationComponent.class);
-        resultSet = entities.queryEntities(criteria);
-    }
-
-    @Override
-    public void initialize(AppStateManager stateManager, Application app) {
-        super.initialize(stateManager, app);
-        application = (SimpleApplication) app;
-    }
-
-    @Override
-    public void stateAttached(AppStateManager stateManager) {
-        super.stateAttached(stateManager);
-        setEnabled(true);
-    }
-
-    @Override
-    public void stateDetached(AppStateManager stateManager) {
-        super.stateDetached(stateManager);
-        setEnabled(false);
+        resultSet = queryEntityResultSet(CanMoveComponent.class, SpeedComponent.class, MovementComponent.class, LocationComponent.class);
     }
 
     @Override
@@ -78,7 +46,7 @@ public class FlightAppState extends AbstractAppState {
             location = moveEntity(sc.getMoveSpeed() * tpf, location, rotation);
             location = strafeEntity(sc.getStrafeSpeed() * tpf, location, rotation);
             rotateEntity(sc.getRotationSpeed() * tpf, rotation);
-            if (!isBounded(movingEntity) || onScreen(location)) {
+            if (onScreen(location)) {
                 Entities.getInstance().changeComponentsForEntity(movingEntity, sc, createLocationComponent(location, rotation, lc));
             } else {
                 Entities.getInstance().changeComponentsForEntity(movingEntity, sc, createLocationComponent(lc.getTranslation(), rotation, lc));
@@ -225,25 +193,13 @@ public class FlightAppState extends AbstractAppState {
 
     private boolean onScreen(Vector3f location) {
         boolean onScreen = true;
-        Vector3f screenLocation = application.getCamera().getScreenCoordinates(location);
-        if (screenLocation.x > application.getContext().getSettings().getWidth() || screenLocation.x < 0) {
+        Vector3f screenLocation = getApplication().getCamera().getScreenCoordinates(location);
+        if (screenLocation.x > getApplication().getContext().getSettings().getWidth() || screenLocation.x < 0) {
             onScreen = false;
         }
-        if (screenLocation.y > application.getContext().getSettings().getHeight() || screenLocation.y < 0) {
+        if (screenLocation.y > getApplication().getContext().getSettings().getHeight() || screenLocation.y < 0) {
             onScreen = false;
         }
         return onScreen;
-    }
-
-    private boolean isBounded(Entity movingEntity) {
-        return isBounded() && movingEntity.matches(new ComponentTypeCriteria(BoundedEntityComponent.class));
-    }
-
-    public boolean isBounded() {
-        return bounded;
-    }
-
-    public void setBounded(boolean bounded) {
-        this.bounded = bounded;
     }
 }
